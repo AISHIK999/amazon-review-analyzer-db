@@ -1,4 +1,5 @@
 import pymysql
+import pandas as pd
 
 RED = '\033[91m'
 RESET = '\033[0m'
@@ -15,7 +16,6 @@ def check_db():
     try:
         init_conn = pymysql.connect(**db_config)
         with init_conn.cursor() as cursor:
-
             create_db_query = "CREATE DATABASE IF NOT EXISTS review_db;"
             cursor.execute(create_db_query)
             init_conn.commit()
@@ -24,7 +24,7 @@ def check_db():
 
             create_table_query = """
                 CREATE TABLE IF NOT EXISTS Review (
-                    ASIN VARCHAR(10) PRIMARY KEY,
+                    ASIN VARCHAR(10),
                     REVIEWER VARCHAR(50),
                     RATING INT,
                     TITLE VARCHAR(100),
@@ -45,23 +45,17 @@ def check_db():
 
 
 def append_to_database(conn):
+    df = pd.read_csv('temp/reviews.csv', encoding='utf-8')
+    df['Date'] = pd.to_datetime(df['Date'])
     with conn.cursor() as cursor:
-        # delete_query = "DELETE FROM Review;"
-        # cursor.execute(delete_query)
-        # conn.commit()
-        insert_query = """
-          LOAD DATA LOCAL INFILE 'temp/reviews.csv'
-          INTO TABLE Review
-          FIELDS TERMINATED BY ','
-          ENCLOSED BY '"'
-          LINES TERMINATED BY '\n'
-          IGNORE 1 ROWS
-          (@asin, @reviewer, @rating, @title, @description, @date, @score)
-          SET ASIN = @asin, Reviewer = @reviewer, Rating = @rating, Title = @title, Description = @description, Date = STR_TO_DATE(@date, '%m/%d/%Y'), Score = @score;
-        """
+        for index, row in df.iterrows():
+            insert_query = """
+                INSERT INTO Review (ASIN, REVIEWER, RATING, TITLE, DESCRIPTION, DATE, SCORE)
+                VALUES (%s, %s, %s, %s, %s, %s, %s);
+            """
+            cursor.execute(insert_query, tuple(row))
+            conn.commit()
 
-        cursor.execute(insert_query)
-        conn.commit()
 
 
 def db_connect():
@@ -81,3 +75,4 @@ if __name__ == "__main__":
     check_db()
     conn = db_connect()
     append_to_database(conn)
+    conn.close()

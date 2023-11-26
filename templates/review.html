@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review</title>
+    <style>
+        /* Style the table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: sans-serif;
+        }
+
+        /* Style the table header */
+        table thead {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        /* Style the table cells */
+        table th, table td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+        }
+
+        /* Add a hover effect to the table rows */
+        table tr:hover {
+            background-color: #D6EEEE;
+        }
+
+    </style>
+</head>
+<body>
+<h1>Review Page</h1>
+{{ data|safe }}
+</body>
+</html>
