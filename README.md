@@ -45,7 +45,6 @@ bash app.sh
 
 ## TODO:
 * The scraping library is capable of fetching data only from the first review page. Need to configure it to be able to scrape reviews across multiple pages.
-* The database seems to append only the first entry of the csv file instead of all of them. Find a way to fix this issue. Most probably generated due to some misconfiguration or some erroneous SQL query. 
 
 ## UML Diagram:
 ```mermaid
